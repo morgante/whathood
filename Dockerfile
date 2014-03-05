@@ -7,11 +7,12 @@ RUN			npm install -g supervisor
 RUN			apt-get -y install rubygems
 RUN			gem install foreman
 
+# Install app dependencies
+ADD			package.json /src/package.json
+RUN			cd /src && npm install
+
 # Load in source
 ADD 		. /src
-
-# Install app dependencies
-RUN 		cd /src; npm install
 
 EXPOSE  	8080
 
