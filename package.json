@@ -6,9 +6,11 @@
     "ejs": ">= 0.0.0",
     "ejs-locals": ">= 0.0.0",
     "express": "3.x.x",
+    "geojson-utils": "^1.1.0",
     "mongoose": ">= 0.0.0",
-    "request": ">= 0.0.0",
-    "twilio": "^1.6.0"
+    "request": "^2.37.0",
+    "twilio": ">= 1.5.0",
+    "underscore": "^1.6.0"
   },
   "engines": {
     "node": "0.8.x",
