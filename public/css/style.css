@@ -1,9 +1,53 @@
 /* manage header */
 body {
 	padding-top: 80px;
+	height: 100%;
 }
 
 #map {
-	width: 800px;
-	height: 800px;
+	position:absolute;
+	top:0;
+	bottom:0;
+	width:100%;
+	opacity: 0.1;
+}
+
+/* prompt */
+#prompt {
+	z-index: 50;
+	position: absolute;
+	margin-left: auto;
+	margin-right: auto;
+	left: 0;
+	right: 0;
+	top: 25%;
+	border-radius: 10px;
+	background-color: #f8f8f8;
+	border-color: #e7e7e7;
+	padding: 20px;
+}
+
+/* form */
+#prompt form {
+	text-align: center
+}
+#prompt p, #prompt input {
+	font-size: 300%;
+}
+
+#prompt input {
+	border: none;
+	border: none;
+	border-bottom: 1px solid #111;
+	background-color: transparent;
+	text-align: center;
+}
+
+#prompt a {
+	/*font-size: 200%;*/
+}
+
+/* top-style */
+#prompt.pinned p, #prompt.pinned input {
+	display: inline;
 }

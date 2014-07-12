@@ -3,20 +3,29 @@ $(document).ready( function() {
 		interpolate : /\{\{(.+?)\}\}/g
 	};
 		
-	$('#prompt .content').html( _.template($('#template-hello').html(), {}) );
+	// $('#prompt .content').html( _.template($('#template-hello').html(), {}) );
 
 	var geo = new google.maps.Geocoder();
+	var mapboxCode = 'morgante.iokj9e1a';
 
 	var hoods;
+	var map;
+	var $map = $('#map');
+	var $prompt = $('#prompt');
 
 	$.getJSON('/data/nyc.geojson', function(json, status) {
 		hoods = json.features;
+
+		_.each(hoods, function(hood) {
+			hood.properties.stroke = "#fc4353";
+			hood.properties["stroke-width"] = 5;
+		});
 	});
 
 	function makeMap() {
-		var map = L.mapbox.map('map', 'examples.map-i86nkdio');
+		var map = L.mapbox.map('map', mapboxCode);
 
-		map.setView([40, -74.50], 9);
+		map.setView([40.7127, -74.0059], 12);
 	}
 
 	makeMap();
@@ -47,14 +56,31 @@ $(document).ready( function() {
 
 				var hood = findHood(position);
 
-				console.log(hood);
+				toMapView();
 			} else {
 				console.log("Geocode was not successful for the following reason: " + status);
 			}
 		});
 	}
 
-	// handleAddress('1742 1st ave');
+	function toMapView() {
+		$map.animate({'opacity': 1});
+
+		$prompt.addClass('pinned');
+
+		$prompt.animate({'top': "-10px", "width": "100%", "height": "70px"});
+		$('p, input', $prompt).animate({"font-size": "140%"});
+
+		console.log($map);
+	}
+
+	handleAddress('1742 1st ave');
+
+	$('#prompt a').click(function(evt) {
+		evt.preventDefault();
+
+		$('form').submit();
+	});
 
 	$('form').submit(function(evt) {
 		var address = $('#location').val();
