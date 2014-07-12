@@ -2,3 +2,8 @@
 body {
 	padding-top: 80px;
 }
+
+#map {
+	width: 800px;
+	height: 800px;
+}

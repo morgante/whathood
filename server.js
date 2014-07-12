@@ -10,17 +10,17 @@ var pkg = require('./package.json')
 		, main = require('./routes/main')
 
 // set up Mongoose
-var mongoConns = {
-	docker: 'mongodb://' + process.env.DB_PORT_27017_TCP_ADDR + ':' + process.env.DB_PORT_27017_TCP_PORT + '/' + pkg.name
-};
-var mongoConn = process.env.MONGO || mongoConns.docker;
-console.log(mongoConn);
-mongoose.connect(mongoConn);
-var db = mongoose.connection;
-db.on('error', console.error.bind(console, 'connection error:'));
-db.once('open', function callback() {
-  console.log('Connected to DB');
-});
+// var mongoConns = {
+// 	docker: 'mongodb://' + process.env.DB_PORT_27017_TCP_ADDR + ':' + process.env.DB_PORT_27017_TCP_PORT + '/' + pkg.name
+// };
+// var mongoConn = process.env.MONGO || mongoConns.docker;
+// console.log(mongoConn);
+// mongoose.connect(mongoConn);
+// var db = mongoose.connection;
+// db.on('error', console.error.bind(console, 'connection error:'));
+// db.once('open', function callback() {
+//   console.log('Connected to DB');
+// });
 
 var app = express();
 // configure Express

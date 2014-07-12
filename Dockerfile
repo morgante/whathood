@@ -7,15 +7,20 @@ RUN			npm install -g supervisor
 RUN			apt-get -y install rubygems
 RUN			gem install foreman
 
-# Install app dependencies
-ADD			package.json /src/package.json
-RUN			cd /src && npm install
+# Start app dir
+RUN 		mkdir /app
 
-# Load in source
-ADD 		. /src
+# Install app dependencies
+ADD 		./package.json /app/package.json
+RUN			cd /app; npm install -d
+
+# Load app dependencies
+ADD 		. /app/src
 
 EXPOSE  	8080
 
-WORKDIR		/src
+WORKDIR		/app/src
 
-CMD 		["foreman", "start"]
+ENV 		SECRET thisissecret
+
+CMD 		["npm", "start"]
