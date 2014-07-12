@@ -2,7 +2,18 @@ $(document).ready( function() {
 	_.templateSettings = {
 		interpolate : /\{\{(.+?)\}\}/g
 	};
-		
+
+	var colors = {
+		highlight: {
+			stroke: "#CC3E07",
+			fill: "#FFA562"
+		},
+		other: {
+			stroke: "#071CCC",
+			fill: "#22AEFF"
+		}
+	};
+
 	// $('#prompt .content').html( _.template($('#template-hello').html(), {}) );
 
 	var geo = new google.maps.Geocoder();
@@ -12,35 +23,42 @@ $(document).ready( function() {
 	var map;
 	var $map = $('#map');
 	var $prompt = $('#prompt');
+	var $name = $('#name');
 
 	$.getJSON('/data/nyc.geojson', function(json, status) {
 		hoods = json.features;
 
-		_.each(hoods, function(hood) {
-			hood.properties.stroke = "#fc4353";
-			hood.properties["stroke-width"] = 5;
+		hoods = _.map(hoods, function(hood) {
+			hood.properties.title = hood.properties.neighborhood;
+			hood.properties.description = hood.properties.borough;
+
+			return hood;
 		});
 	});
 
 	function makeMap() {
-		var map = L.mapbox.map('map', mapboxCode);
+		map = L.mapbox.map('map', mapboxCode);
 
 		map.setView([40.7127, -74.0059], 12);
+
+		handleAddress('1742 1st ave');
 	}
 
 	makeMap();
 
-	function findHood(point) {
-		var hood = _.find(hoods, function(hood) {
-			var poly = hood.geometry;
+	function inHood(point, hood) {
+		var poly = hood.geometry;
 
-			return gju.pointInPolygon({"type":"Point","coordinates":point}, poly);
-		});
+		return gju.pointInPolygon({"type":"Point","coordinates":point}, poly);
+	}
 
-		return hood;
+	function showName(name) {
+		$('p', $name).text(name);
+		$name.show();
 	}
 
 	function handleAddress(address) {
+
 		// hack - only NYC for now
 		address = address + ' New York, NY';
 
@@ -54,27 +72,56 @@ $(document).ready( function() {
 				};
 				position = [position.long, position.lat]; // GeoJSON format
 
-				var hood = findHood(position);
+				// find hoods
+				var hoodFinder = inHood.bind(undefined, position);
+				var hood = _.find(hoods, hoodFinder);
+				var oHoods = _.reject(hoods, hoodFinder);
 
-				toMapView();
+				// find centroid
+				var centroid = gju.centroid(hood.geometry);
+				map.setView([centroid.coordinates[1], centroid.coordinates[0]], 14);
+
+				// color my hood
+				hood.properties["stroke"] = colors.highlight.stroke;
+				hood.properties["fill"] = colors.highlight.fill;
+
+				// color hoods
+				oHoods = _.map(oHoods, function(hood) {
+					hood.properties["stroke"] = colors.other.stroke;
+					hood.properties["fill"] = colors.other.fill;
+					return hood;
+				});
+
+				// add back in our hood
+				oHoods.push(hood);
+
+				L.geoJson(oHoods, { style: L.mapbox.simplestyle.style }).addTo(map);
+
+				toMapView(function() {
+					showName(hood.properties.neighborhood);
+				});
+
 			} else {
 				console.log("Geocode was not successful for the following reason: " + status);
 			}
 		});
 	}
 
-	function toMapView() {
+	function toMapView(cb) {
+		if ($prompt.hasClass('pinned')) {
+			cb();
+			return;
+		}
+
 		$map.animate({'opacity': 1});
 
 		$prompt.addClass('pinned');
 
 		$prompt.animate({'top': "-10px", "width": "100%", "height": "70px"});
-		$('p, input', $prompt).animate({"font-size": "140%"});
+		$('p, input', $prompt).animate({"font-size": "140%"}, {done: cb});
 
 		console.log($map);
 	}
-
-	handleAddress('1742 1st ave');
 
 	$('#prompt a').click(function(evt) {
 		evt.preventDefault();

@@ -51,3 +51,24 @@ body {
 #prompt.pinned p, #prompt.pinned input {
 	display: inline;
 }
+
+/* name */
+#name {
+	display: none;
+	z-index: 50;
+	position: absolute;
+	left: 0;
+	top: 70%;
+	text-align: center;
+	width: 100%
+}
+
+#name p {
+	background: blue;
+	display: inline;
+	padding: 10px;
+	font-size: 500%;
+	background-color:rgba(0,0,0,0.6);
+	border-radius: 10px;
+	color: #DDD;
+}
