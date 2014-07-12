@@ -18,6 +18,7 @@ $(document).ready( function() {
 
 	var geo = new google.maps.Geocoder();
 	var mapboxCode = 'morgante.iokj9e1a';
+	var featureLayer;
 
 	var hoods;
 	var map;
@@ -34,14 +35,14 @@ $(document).ready( function() {
 
 			return hood;
 		});
+
+		featureLayer = L.mapbox.featureLayer().addTo(map);
 	});
 
 	function makeMap() {
 		map = L.mapbox.map('map', mapboxCode);
 
 		map.setView([40.7127, -74.0059], 12);
-
-		handleAddress('1742 1st ave');
 	}
 
 	makeMap();
@@ -95,7 +96,9 @@ $(document).ready( function() {
 				// add back in our hood
 				oHoods.push(hood);
 
-				L.geoJson(oHoods, { style: L.mapbox.simplestyle.style }).addTo(map);
+				// L.geoJson(oHoods, { style: L.mapbox.simplestyle.style }).addTo(map);
+
+				featureLayer.setGeoJSON(oHoods);
 
 				toMapView(function() {
 					showName(hood.properties.neighborhood);
@@ -119,8 +122,6 @@ $(document).ready( function() {
 
 		$prompt.animate({'top': "-10px", "width": "100%", "height": "70px"});
 		$('p, input', $prompt).animate({"font-size": "140%"}, {done: cb});
-
-		console.log($map);
 	}
 
 	$('#prompt a').click(function(evt) {
