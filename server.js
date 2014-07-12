@@ -9,6 +9,8 @@ var express = require('express')
 var pkg = require('./package.json')
 		, main = require('./routes/main')
 
+var twilio = require('./routes/twilio');
+
 // set up Mongoose
 // var mongoConns = {
 // 	docker: 'mongodb://' + process.env.DB_PORT_27017_TCP_ADDR + ':' + process.env.DB_PORT_27017_TCP_PORT + '/' + pkg.name
@@ -40,6 +42,9 @@ app.configure(function() {
 
 // set up routes
 app.get('/', main.index);
+
+app.get('/connect/sms/receive', twilio.receive_sms);
+app.post('/connect/sms/receive', twilio.receive_sms);
 
 // port
 var port = process.env.PORT || 8080;
